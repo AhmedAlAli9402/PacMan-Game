@@ -1,0 +1,17 @@
+.grid {
+    width:900px;
+    height:900px;
+    border:solid 1px black;
+    display: flex;
+    position: flex;
+    flex-wrap:wrap;
+    float: inline-start;
+    background-image: "grid.jpeg";
+}
+
+.grid div {
+    width: 30px;
+    height: 30px;
+    border:solid 1px black;
+    box-sizing: border-box;
+}
