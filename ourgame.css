@@ -7,6 +7,9 @@
     flex-wrap:wrap;
     float: inline-start;
     background-image: "grid.jpeg";
+    background: url('grid.jpeg') no-repeat;
+    background-size: 815px;
+    border-radius: 20px;
 }
 
 .grid div {
@@ -14,4 +17,10 @@
     height: 30px;
     border:solid 1px black;
     box-sizing: border-box;
+}
+div .bread {
+    border:solid 1px white
+}
+div .pacman {
+    border:solid 3px yellowgreen
 }
