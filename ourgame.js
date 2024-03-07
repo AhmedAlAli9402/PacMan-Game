@@ -1,7 +1,11 @@
 const grid = document.querySelector('.grid')
 const width = 30
 let facing = "right"
+let pacmanMoving
 let currentPacmanPos = 673
+let stopPacman = false
+let changeFacing = false
+let originalFacing = "right"
 let borders = [31,32,33,34,35,36,37,38,39,40,42,44,45,46,47,
     48,49,50,51,52,53,54,55,61,66, 96, 126, 156, 186, 216,
      246, 276, 306, 336, 366, 396, 426, 456, 486, 516, 546,
@@ -24,7 +28,9 @@ let borders = [31,32,33,34,35,36,37,38,39,40,42,44,45,46,47,
             755, 756,  759, 760, 761, 762, 764, 765, 766, 767, 768, 770,
              771, 772, 773, 774,781,811,841,792,852,795,825,775,805,835,
              865,841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851,
-         852, 853, 854, 855, 856, 857, 858,625, 655,181,211,241,242,243,244,245,699,729,708,738,41,91,121,197,227, 859, 860, 861, 862, 863, 864, 822]
+         852, 853, 854, 855, 856, 857, 858,625, 655,181,211,241,242,243,
+         244,245,699,729,708,738,41,91,121,197,227, 859, 860, 861, 862,
+          863, 864, 822]
 for (let i=0; i<width*width;i++){
    const square = document.createElement('div')
    square.setAttribute("id", i)
@@ -38,15 +44,74 @@ for (i=0;i<borders.length;i++){
 }
 }createroute()
 
-pacmanPos(currentPacmanPos)
-pacmanPos(currentPacmanPos+1)
 function pacmanPos(pos){
     squares[currentPacmanPos].classList.remove('pacman')
     squares[pos].classList.add('pacman')
     currentPacmanPos = pos
 }
-// function movePacman(e) {
-//     switch(e.key){
-//         case 'ArrowLeft':
-//     }
-// }
+function movePacman() {
+    if (facing === "right" && borders.includes(currentPacmanPos + 1)){
+    updatePacmanPos = currentPacmanPos + 1
+    pacmanPos(updatePacmanPos)
+    originalFacing = facing
+} else if (facing === "left" && borders.includes(currentPacmanPos - 1)){
+    updatePacmanPos = currentPacmanPos - 1
+    pacmanPos(updatePacmanPos)
+    originalFacing = facing
+} else if (facing === "down" && borders.includes(currentPacmanPos + 30)){
+    updatePacmanPos = currentPacmanPos + width
+    pacmanPos(updatePacmanPos)
+    originalFacing = facing
+} else if (facing === "up" && borders.includes(currentPacmanPos - 30)){
+    updatePacmanPos = currentPacmanPos - width
+    pacmanPos(updatePacmanPos)
+    originalFacing = facing
+} else {
+    facing = originalFacing
+}
+}
+function changeDirection(e){
+    switch(e.key){
+        case 'ArrowUp':
+            if (facing !== "up"){
+                facing = "up"
+                movePacman()
+                break
+            } else {
+                break
+            }
+        case 'ArrowRight':
+            if (facing !== "right"){
+                facing = "right"
+                changeFacing = true
+                movePacman()
+                changeFacing = false
+                break
+            } else {
+                break
+            }
+        case 'ArrowDown':
+            if (facing !== "down"){
+                facing = "down"
+                changeFacing = true
+                movePacman()
+                changeFacing = false
+                break
+            } else {
+                break
+            }
+        case 'ArrowLeft':
+            if (facing !== "left"){
+                facing = "left"
+                changeFacing = true
+                movePacman()
+                changeFacing = false
+                break
+            } else {
+                break
+            }
+    }
+}
+document.addEventListener('keydown', changeDirection)
+
+pacmanMoving = setInterval(movePacman, 300);
