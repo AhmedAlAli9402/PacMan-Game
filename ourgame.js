@@ -3,10 +3,8 @@ const width = 30
 let facing = "right"
 let pacmanMoving
 let currentPacmanPos = 673
-let stopPacman = false
-let changeFacing = false
 let originalFacing = "right"
-let borders = [31,32,33,34,35,36,37,38,39,40,42,44,45,46,47,
+let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
     48,49,50,51,52,53,54,55,61,66, 96, 126, 156, 186, 216,
      246, 276, 306, 336, 366, 396, 426, 456, 486, 516, 546,
       576, 606, 636, 666, 696, 726, 756, 151, 152, 153, 154,
@@ -25,7 +23,7 @@ let borders = [31,32,33,34,35,36,37,38,39,40,42,44,45,46,47,
           601,631,661, 612,642,672,615,645,675,666, 667, 668, 669,
            670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680,662,663
            ,683,684,685,663,693,723,753,713,743,773,751, 752, 753, 754,
-            755, 756,  759, 760, 761, 762, 764, 765, 766, 767, 768, 770,
+            755, 756,  759, 760, 761, 762,765, 766, 767, 768, 770,
              771, 772, 773, 774,781,811,841,792,852,795,825,775,805,835,
              865,841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851,
          852, 853, 854, 855, 856, 857, 858,625, 655,181,211,241,242,243,
@@ -45,8 +43,10 @@ for (i=0;i<borders.length;i++){
 }createroute()
 
 function pacmanPos(pos){
+    squares[currentPacmanPos].classList.remove(originalFacing)
     squares[currentPacmanPos].classList.remove('pacman')
     squares[pos].classList.add('pacman')
+    squares[pos].classList.add(facing)
     currentPacmanPos = pos
 }
 function movePacman() {
@@ -77,41 +77,27 @@ function changeDirection(e){
                 facing = "up"
                 movePacman()
                 break
-            } else {
-                break
-            }
+            } 
         case 'ArrowRight':
             if (facing !== "right"){
                 facing = "right"
-                changeFacing = true
                 movePacman()
-                changeFacing = false
                 break
-            } else {
-                break
-            }
+            } 
         case 'ArrowDown':
             if (facing !== "down"){
                 facing = "down"
-                changeFacing = true
                 movePacman()
-                changeFacing = false
                 break
-            } else {
-                break
-            }
+            } 
         case 'ArrowLeft':
             if (facing !== "left"){
                 facing = "left"
-                changeFacing = true
                 movePacman()
-                changeFacing = false
-                break
-            } else {
                 break
             }
     }
 }
 document.addEventListener('keydown', changeDirection)
 
-pacmanMoving = setInterval(movePacman, 300);
+pacmanMoving = setInterval(movePacman, 200);
