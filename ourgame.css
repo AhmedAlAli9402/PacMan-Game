@@ -1,7 +1,9 @@
+body{
+    background-color: rgb(0, 0, 63);
+}
 .grid {
     width:900px;
     height:900px;
-    border:solid 1px black;
     display: flex;
     position: flex;
     flex-wrap:wrap;
@@ -19,15 +21,17 @@
 }
 div .bread {
     /* border:solid 1px white */
+    background: url('pellet3.jpg') no-repeat;
+    background-size: 18px;
 }
 div .pacman {
-   height:43px;
-    width:43px;
+   /* height:43px; */
+    /* width:43px; */
     /* border:solid 3px yellowgreen; */
     background-image:url('pac.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    background-size: 40px;
+    background-size: 30px;
 }
 div .left{
     transform: rotate(180deg);
