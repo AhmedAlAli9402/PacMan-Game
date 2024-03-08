@@ -2,11 +2,14 @@ const grid = document.querySelector('.grid')
 const width = 30
 let facing = "right"
 let pacmanMoving
-let ghostStart
+let ghostMoving
 let currentPacmanPos = 673
 let originalFacing = "right"
 let ghostNum = 0
-let ghosts = {1:{name:"blinky", position:403},2:{name:"pinky", position:431}, 3:{name:"clyde", position:433}, 4:{name:"inky", position:435}}
+let ghosts = {1:{name:"blinky", position:343, moving:"right"},
+              2:{name:"pinky", position:431, moving:"right"},
+               3:{name:"clyde", position:433, moving:"right"},
+                4:{name:"inky", position:435, moving:"right"}}
 let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
     48,49,50,51,52,53,54,55,61,66, 96, 126, 156, 186, 216,
      246, 276, 306, 336, 366, 396, 426, 456, 486, 516, 546,
@@ -61,6 +64,7 @@ function pacmanPos(pos){
     currentPacmanPos = pos
 }
 function movePacman() {
+    window.setInterval(moveGhosts(1), 100)
     if (facing === "right" && borders.includes(currentPacmanPos + 1)){
     updatePacmanPos = currentPacmanPos + 1
     pacmanPos(updatePacmanPos)
@@ -116,9 +120,36 @@ squares[ghosts[4].position].classList.add(ghosts[4].name)
 document.addEventListener('keydown', changeDirection)
 
 pacmanMoving = setInterval(movePacman, 200);
-moveGhosts(1)
+// ghostMoving = setInterval(moveGhosts(1), 200);
+
 function moveGhosts(ghostNum){
     squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
-    setTimeout(10000)
-    squares[343].classList.add(ghosts[ghostNum].name)
+    if ((Math.floor(currentPacmanPos/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+        ghosts[ghostNum].position += 30
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if ((Math.floor(currentPacmanPos/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+        ghosts[ghostNum].position -= 30
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if ((currentPacmanPos%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)){
+        ghosts[ghostNum].position++
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if ((currentPacmanPos%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)){
+        ghosts[ghostNum].position--
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (ghosts[ghostNum].position === currentPacmanPos){
+        ghosts[ghostNum].position = 343
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (borders.includes(ghosts[ghostNum].position+1)) {
+        ghosts[ghostNum].position++
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (borders.includes(ghosts[ghostNum].position--)) {
+        ghosts[ghostNum].position--
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (borders.includes(ghosts[ghostNum].position+30)) {
+        ghosts[ghostNum].position += 30
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    }else if (borders.includes(ghosts[ghostNum].position-30)) {
+        ghosts[ghostNum].position -= 30
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    }
 }
