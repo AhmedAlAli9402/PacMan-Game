@@ -2,8 +2,11 @@ const grid = document.querySelector('.grid')
 const width = 30
 let facing = "right"
 let pacmanMoving
+let ghostStart
 let currentPacmanPos = 673
 let originalFacing = "right"
+let ghostNum = 0
+let ghosts = {1:{name:"blinky", position:403},2:{name:"pinky", position:431}, 3:{name:"clyde", position:433}, 4:{name:"inky", position:435}}
 let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
     48,49,50,51,52,53,54,55,61,66, 96, 126, 156, 186, 216,
      246, 276, 306, 336, 366, 396, 426, 456, 486, 516, 546,
@@ -28,7 +31,14 @@ let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
              865,841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851,
          852, 853, 854, 855, 856, 857, 858,625, 655,181,211,241,242,243,
          244,245,699,729,707,737,41,91,121,197,227, 859, 860, 861, 862,
-          863, 864, 822]
+          863, 864, 822, 403,431,435,433]
+function StartPosition(){
+    ghosts[1].position = 403
+    ghosts[2].position = 431
+    ghosts[3].position = 433
+    ghosts[4].position = 435
+    currentPacmanPos = 673
+}
 for (let i=0; i<width*width;i++){
    const square = document.createElement('div')
    square.setAttribute("id", i)
@@ -37,7 +47,7 @@ for (let i=0; i<width*width;i++){
 const squares = Array.from(document.querySelectorAll('.grid div'))
 
 function createroute(){
-for (i=0;i<borders.length;i++){
+for (i=0;i<borders.length-4;i++){
     squares[borders[i]].classList.add('bread')
 }
 }createroute()
@@ -99,6 +109,16 @@ function changeDirection(e){
             }
     }
 }
+squares[ghosts[1].position].classList.add(ghosts[1].name)
+squares[ghosts[2].position].classList.add(ghosts[2].name)
+squares[ghosts[3].position].classList.add(ghosts[3].name)
+squares[ghosts[4].position].classList.add(ghosts[4].name)
 document.addEventListener('keydown', changeDirection)
 
 pacmanMoving = setInterval(movePacman, 200);
+moveGhosts(1)
+function moveGhosts(ghostNum){
+    squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
+    setTimeout(10000)
+    squares[343].classList.add(ghosts[ghostNum].name)
+}
