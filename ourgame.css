@@ -20,11 +20,19 @@ body{
     /* border:solid 1px purple; */
     box-sizing: border-box;
 }
-div .bread {
+div .pellet {
     /* border:solid 1px white */
     background: url('pellet3.jpg') no-repeat;
     background-size: 18px;
-
+}
+div .powerpellet {
+    background: url('pellet.jpg') no-repeat;
+    background-size: 25px;
+    filter: brightness(1.75);
+}
+div .scaredghost {
+    background-image: url('scaredghost.jpg');
+    background-size: 30px;
 }
 div .pacman {
    /* height:43px; */

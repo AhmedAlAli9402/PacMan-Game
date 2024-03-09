@@ -6,13 +6,13 @@ let ghostMoving
 let currentPacmanPos = 673
 let originalFacing = "right"
 let ghostNum = 0
-let ghosts = {1:{name:"blinky", position:343, moving:"right"},
-              2:{name:"pinky", position:431, moving:"right"},
-               3:{name:"clyde", position:433, moving:"right"},
-                4:{name:"inky", position:435, moving:"right"}}
+let ghosts = {1:{name:"blinky", position:343, moving:"left", target:31, targetMet:false, firstMove:false},
+              2:{name:"pinky", position:431, moving:"right", target:55, targetMet:false, firstMove:true},
+               3:{name:"scaredghost", position:433, moving:"right", target:865, targetMet:false, firstMove:true},
+                4:{name:"inky", position:435, moving:"right", target:841, targetMet:false, firstMove:true}}
 let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
     48,49,50,51,52,53,54,55,61,66, 96, 126, 156, 186, 216,
-     246, 276, 306, 336, 366, 396, 426, 456, 486, 516, 546,
+     246, 276, 306,  336,366, 396, 426, 456, 486, 516, 546,
       576, 606, 636, 666, 696, 726, 756, 151, 152, 153, 154,
        155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165,
         166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 50,
@@ -21,7 +21,7 @@ let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
            740, 770,72,102,132,162,135,105,75,55,85,115,145,175,
            205,235,265,189,219,249,250,251,252,255,256,257,261,315,312,
            262,263,264,265,282,285,427,428,399,340,341,342,343,344,
-           345,346,347,339, 369, 399, 429, 459, 489, 519,438,439, 549,
+           345,346,347,339, 369, 429, 459, 489, 519,438,439, 549,
          579, 519, 520, 521, 522, 523, 524, 525, 526, 527, 347, 377,
           407, 437, 467, 497, 527, 557, 587,410,441,442,424,425
         ,571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582,
@@ -51,20 +51,24 @@ const squares = Array.from(document.querySelectorAll('.grid div'))
 
 function createroute(){
 for (i=0;i<borders.length-4;i++){
-    squares[borders[i]].classList.add('bread')
+    squares[borders[i]].classList.add('pellet')
 }
 }createroute()
+
+squares[91].classList.replace('pellet', 'powerpellet')
+squares[125].classList.replace('pellet', 'powerpellet')
+squares[661].classList.replace('pellet', 'powerpellet')
+squares[685].classList.replace('pellet', 'powerpellet')
 
 function pacmanPos(pos){
     squares[currentPacmanPos].classList.remove(originalFacing)
     squares[currentPacmanPos].classList.remove('pacman')
     squares[pos].classList.add('pacman')
-    squares[pos].classList.remove('bread')
+    squares[pos].classList.remove('pellet')
     squares[pos].classList.add(facing)
     currentPacmanPos = pos
 }
-function movePacman() {
-    window.setInterval(moveGhosts(1), 100)
+function movePacman() {  
     if (facing === "right" && borders.includes(currentPacmanPos + 1)){
     updatePacmanPos = currentPacmanPos + 1
     pacmanPos(updatePacmanPos)
@@ -84,6 +88,8 @@ function movePacman() {
 } else {
     facing = originalFacing
 }
+moveGhosts(1)
+   moveGhosts(2)
 }
 function changeDirection(e){
     switch(e.key){
@@ -123,33 +129,190 @@ pacmanMoving = setInterval(movePacman, 200);
 // ghostMoving = setInterval(moveGhosts(1), 200);
 
 function moveGhosts(ghostNum){
-    squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
-    if ((Math.floor(currentPacmanPos/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+    if (ghosts[ghostNum].firstMove){
+        squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
+        ghosts[ghostNum].position = 343
+        squares[[ghosts[ghostNum].position]].classList.add(ghosts[ghostNum].name)
+        ghosts[ghostNum].firstMove = false
+        console.log(ghosts)
+
+    } 
+    let target = ghosts[ghostNum].target
+    if (ghosts[ghostNum].targetMet){
+    target = currentPacmanPos
+}
+squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
+switch (ghosts[ghostNum].moving){
+    case "down":
+        if (ghosts[ghostNum].position === target){
+            ghosts[ghostNum].targetMet = true
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
         ghosts[ghostNum].position += 30
+        ghosts[ghostNum].moving = "down"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if ((Math.floor(currentPacmanPos/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
-        ghosts[ghostNum].position -= 30
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if ((currentPacmanPos%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)){
+    }  else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
         ghosts[ghostNum].position++
+        ghosts[ghostNum].moving = "right"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if ((currentPacmanPos%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)){
+    } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
         ghosts[ghostNum].position--
+        ghosts[ghostNum].moving = "left"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
     } else if (ghosts[ghostNum].position === currentPacmanPos){
         ghosts[ghostNum].position = 343
+        ghosts[ghostNum].moving = "right"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if (borders.includes(ghosts[ghostNum].position+1)) {
-        ghosts[ghostNum].position++
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if (borders.includes(ghosts[ghostNum].position--)) {
-        ghosts[ghostNum].position--
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if (borders.includes(ghosts[ghostNum].position+30)) {
+    }  else if (borders.includes(ghosts[ghostNum].position+30)) {
         ghosts[ghostNum].position += 30
+        ghosts[ghostNum].moving = "down"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    }else if (borders.includes(ghosts[ghostNum].position-30)) {
+    }else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
         ghosts[ghostNum].position -= 30
+        ghosts[ghostNum].moving = "up"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    }else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+        ghosts[ghostNum].position++
+        ghosts[ghostNum].moving = "right"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (borders.includes(ghosts[ghostNum].position-1) && ghosts[ghostNum].position !== 426) {
+        ghosts[ghostNum].position--
+        ghosts[ghostNum].moving = "left"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (borders.includes(ghosts[ghostNum].position-30)) {
+        ghosts[ghostNum].position -= 30
+        ghosts[ghostNum].moving = "up"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
     }
-}
+    break
+    case "left":
+        if (ghosts[ghostNum].position === currentPacmanPos){
+            ghosts[ghostNum].position = 343
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+            ghosts[ghostNum].position--
+            ghosts[ghostNum].moving = "left"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+            ghosts[ghostNum].position += 30
+            ghosts[ghostNum].moving = "down"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+            ghosts[ghostNum].position -= 30
+            ghosts[ghostNum].moving = "up"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (ghosts[ghostNum].position === target){
+            ghosts[ghostNum].targetMet = true
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        }else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
+            ghosts[ghostNum].position--
+            ghosts[ghostNum].moving = "left"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
+            ghosts[ghostNum].position++
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position+30)) {
+            ghosts[ghostNum].position += 30
+            ghosts[ghostNum].moving = "down"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        }else if (borders.includes(ghosts[ghostNum].position-30)) {
+            ghosts[ghostNum].position -= 30
+            ghosts[ghostNum].moving = "up"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+            ghosts[ghostNum].position++
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } 
+       break
+    case "up":
+        if (ghosts[ghostNum].position === currentPacmanPos){
+            ghosts[ghostNum].position = 343
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+            ghosts[ghostNum].position -= 30
+            ghosts[ghostNum].moving = "up"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        }else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
+            ghosts[ghostNum].position++
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+            ghosts[ghostNum].position--
+            ghosts[ghostNum].moving = "left"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (ghosts[ghostNum].position === target){
+            ghosts[ghostNum].targetMet = true
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position-30)) {
+            ghosts[ghostNum].position -= 30
+            ghosts[ghostNum].moving = "up"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        }  else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+            ghosts[ghostNum].position += 30
+            ghosts[ghostNum].moving = "down"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+            ghosts[ghostNum].position++
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
+            ghosts[ghostNum].position--
+            ghosts[ghostNum].moving = "left"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position+30)) {
+            ghosts[ghostNum].position += 30
+            ghosts[ghostNum].moving = "down"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        }
+        break
+    case "right":
+        if (ghosts[ghostNum].position === currentPacmanPos){
+            ghosts[ghostNum].position = 343
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
+            ghosts[ghostNum].position++
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+            ghosts[ghostNum].position += 30
+            ghosts[ghostNum].moving = "down"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+            ghosts[ghostNum].position -= 30
+            ghosts[ghostNum].moving = "up"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (ghosts[ghostNum].position === target){
+            ghosts[ghostNum].targetMet = true
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+            ghosts[ghostNum].position--
+            ghosts[ghostNum].moving = "left"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+            ghosts[ghostNum].position++
+            ghosts[ghostNum].moving = "right"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position+30)) {
+            ghosts[ghostNum].position += 30
+            ghosts[ghostNum].moving = "down"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        }else if (borders.includes(ghosts[ghostNum].position-30)) {
+            ghosts[ghostNum].position -= 30
+            ghosts[ghostNum].moving = "up"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        } else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
+            ghosts[ghostNum].position--
+            ghosts[ghostNum].moving = "left"
+            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        }
+        break 
+}}
