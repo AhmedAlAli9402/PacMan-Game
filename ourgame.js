@@ -6,10 +6,11 @@ let ghostMoving
 let currentPacmanPos = 673
 let originalFacing = "right"
 let ghostNum = 0
-let ghosts = {1:{name:"blinky", position:343, moving:"left", target:31, targetMet:false, firstMove:false},
-              2:{name:"pinky", position:431, moving:"right", target:55, targetMet:false, firstMove:true},
-               3:{name:"scaredghost", position:433, moving:"right", target:865, targetMet:false, firstMove:true},
-                4:{name:"inky", position:435, moving:"right", target:841, targetMet:false, firstMove:true}}
+let tryBest = true
+let ghosts = {1:{name:"blinky", position:343, moving:"left", target:31, targetMet:false, firstMove:false, tryBest:true},
+              2:{name:"pinky", position:431, moving:"right", target:55, targetMet:false, firstMove:true, tryBest:true},
+               3:{name:"scaredghost", position:433, moving:"right", target:865, targetMet:false, firstMove:true, tryBest:true},
+                4:{name:"inky", position:435, moving:"right", target:841, targetMet:false, firstMove:true, tryBest:true}}
 let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
     48,49,50,51,52,53,54,55,61,66, 96, 126, 156, 186, 216,
      246, 276, 306,  336,366, 396, 426, 456, 486, 516, 546,
@@ -144,175 +145,280 @@ function moveGhosts(ghostNum){
 squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
 switch (ghosts[ghostNum].moving){
     case "down":
-        if (ghosts[ghostNum].position === target){
-            ghosts[ghostNum].targetMet = true
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+        if (TargetMet(ghostNum)){
+        } else if (MoveDown(ghostNum, true)){
+        } else if (MoveRight(ghostNum, true)){
+        } else if (MoveLeft(ghostNum, true)){
+        } else if (MoveDown(ghostNum, false)){
+        } else if (MoveUp(ghostNum, true)){
+        } else if (MoveRight(ghostNum, false)){
+        } else if (MoveLeft(ghostNum, false)){
+        } else if (MoveUp(ghostNum, false))
+        break
+    //     if (ghosts[ghostNum].position === target){
+    //         ghosts[ghostNum].targetMet = true
+    //         ghosts[ghostNum].moving = "right"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if (ghosts[ghostNum].position === currentPacmanPos){
+    //         ghosts[ghostNum].position = 343
+    //         ghosts[ghostNum].moving = "right"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     }  else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+    //     ghosts[ghostNum].position += 30
+    //     ghosts[ghostNum].moving = "down"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // }  else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
+    //     ghosts[ghostNum].position++
+    //     ghosts[ghostNum].moving = "right"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+    //     ghosts[ghostNum].position--
+    //     ghosts[ghostNum].moving = "left"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // } else if (borders.includes(ghosts[ghostNum].position+30)) {
+    //     ghosts[ghostNum].position += 30
+    //     ghosts[ghostNum].moving = "down"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // }else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+    //     ghosts[ghostNum].position -= 30
+    //     ghosts[ghostNum].moving = "up"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // }else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+    //     ghosts[ghostNum].position++
+    //     ghosts[ghostNum].moving = "right"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // } else if (borders.includes(ghosts[ghostNum].position-1) && ghosts[ghostNum].position !== 426) {
+    //     ghosts[ghostNum].position--
+    //     ghosts[ghostNum].moving = "left"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // } else if (borders.includes(ghosts[ghostNum].position-30)) {
+    //     ghosts[ghostNum].position -= 30
+    //     ghosts[ghostNum].moving = "up"
+    //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    // }
+    // break
+    case "left":
+        if (TargetMet(ghostNum)){
+        } else if (MoveLeft(ghostNum, true)){
+        } else if (MoveDown(ghostNum, true)){
+        } else if (MoveUp(ghostNum, true)){
+        } else if (MoveLeft(ghostNum, false)){
+        } else if (MoveRight(ghostNum, true)){
+        } else if (MoveDown(ghostNum, false)){
+        } else if (MoveUp(ghostNum, false)){
+        } else if (MoveRight(ghostNum, false))
+        break
+    //     if (ghosts[ghostNum].position === currentPacmanPos){
+    //         ghosts[ghostNum].position = 343
+    //         ghosts[ghostNum].moving = "right"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+    //         ghosts[ghostNum].position--
+    //         ghosts[ghostNum].moving = "left"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+    //         ghosts[ghostNum].position += 30
+    //         ghosts[ghostNum].moving = "down"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+    //         ghosts[ghostNum].position -= 30
+    //         ghosts[ghostNum].moving = "up"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if (ghosts[ghostNum].position === target){
+    //         ghosts[ghostNum].targetMet = true
+    //         ghosts[ghostNum].moving = "right"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     }else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
+    //         ghosts[ghostNum].position--
+    //         ghosts[ghostNum].moving = "left"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
+    //         ghosts[ghostNum].position++
+    //         ghosts[ghostNum].moving = "right"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if (borders.includes(ghosts[ghostNum].position+30)) {
+    //         ghosts[ghostNum].position += 30
+    //         ghosts[ghostNum].moving = "down"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     }else if (borders.includes(ghosts[ghostNum].position-30)) {
+    //         ghosts[ghostNum].position -= 30
+    //         ghosts[ghostNum].moving = "up"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+    //         ghosts[ghostNum].position++
+    //         ghosts[ghostNum].moving = "right"
+    //         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    //     } 
+    //    break
+    case "up":
+        if (TargetMet(ghostNum)){
+        } else if (MoveUp(ghostNum, true)){
+        } else if (MoveRight(ghostNum, true)){
+        } else if (MoveLeft(ghostNum, true)){
+        } else if (MoveUp(ghostNum, false)){
+        } else if (MoveDown(ghostNum, true)){
+        } else if (MoveRight(ghostNum, false)){
+        } else if (MoveLeft(ghostNum, false)){
+        } else if (MoveUp(ghostNum, false))
+        break
+        // if (ghosts[ghostNum].position === currentPacmanPos){
+        //     ghosts[ghostNum].position = 343
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+        //     ghosts[ghostNum].position -= 30
+        //     ghosts[ghostNum].moving = "up"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // }else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
+        //     ghosts[ghostNum].position++
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+        //     ghosts[ghostNum].position--
+        //     ghosts[ghostNum].moving = "left"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (ghosts[ghostNum].position === target){
+        //     ghosts[ghostNum].targetMet = true
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (borders.includes(ghosts[ghostNum].position-30)) {
+        //     ghosts[ghostNum].position -= 30
+        //     ghosts[ghostNum].moving = "up"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // }  else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+        //     ghosts[ghostNum].position += 30
+        //     ghosts[ghostNum].moving = "down"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+        //     ghosts[ghostNum].position++
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
+        //     ghosts[ghostNum].position--
+        //     ghosts[ghostNum].moving = "left"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (borders.includes(ghosts[ghostNum].position+30)) {
+        //     ghosts[ghostNum].position += 30
+        //     ghosts[ghostNum].moving = "down"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // }
+        // break
+    case "right":
+        if (TargetMet(ghostNum)){
+        } else if (MoveRight(ghostNum, true)){
+        } else if (MoveDown(ghostNum, true)){
+        } else if (MoveUp(ghostNum, true)){
+        } else if (MoveRight(ghostNum, false)){
+        } else if (MoveLeft(ghostNum, true)){
+        } else if (MoveDown(ghostNum, false)){
+        } else if (MoveUp(ghostNum, false)){
+        } else if (MoveRight(ghostNum, false))
+        break
+        // if (ghosts[ghostNum].position === currentPacmanPos){
+        //     ghosts[ghostNum].position = 343
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
+        //     ghosts[ghostNum].position++
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
+        //     ghosts[ghostNum].position += 30
+        //     ghosts[ghostNum].moving = "down"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+        //     ghosts[ghostNum].position -= 30
+        //     ghosts[ghostNum].moving = "up"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (ghosts[ghostNum].position === target){
+        //     ghosts[ghostNum].targetMet = true
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+        //     ghosts[ghostNum].position--
+        //     ghosts[ghostNum].moving = "left"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
+        //     ghosts[ghostNum].position++
+        //     ghosts[ghostNum].moving = "right"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (borders.includes(ghosts[ghostNum].position+30)) {
+        //     ghosts[ghostNum].position += 30
+        //     ghosts[ghostNum].moving = "down"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // }else if (borders.includes(ghosts[ghostNum].position-30)) {
+        //     ghosts[ghostNum].position -= 30
+        //     ghosts[ghostNum].moving = "up"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // } else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
+        //     ghosts[ghostNum].position--
+        //     ghosts[ghostNum].moving = "left"
+        //     squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        // }
+        // break 
+}}
+
+function MoveDown(ghostNum, tryBest){
+    if (tryBest && ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30))){
         ghosts[ghostNum].position += 30
         ghosts[ghostNum].moving = "down"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    }  else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
-        ghosts[ghostNum].position++
-        ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
-        ghosts[ghostNum].position--
-        ghosts[ghostNum].moving = "left"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if (ghosts[ghostNum].position === currentPacmanPos){
-        ghosts[ghostNum].position = 343
-        ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    }  else if (borders.includes(ghosts[ghostNum].position+30)) {
+    } else if (!tryBest && borders.includes(ghosts[ghostNum].position+30)) {
         ghosts[ghostNum].position += 30
         ghosts[ghostNum].moving = "down"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    }else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
+    }
+}
+
+function MoveUp(ghostNum, tryBest){
+    if (tryBest && ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30))){
         ghosts[ghostNum].position -= 30
         ghosts[ghostNum].moving = "up"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    }else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
-        ghosts[ghostNum].position++
-        ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if (borders.includes(ghosts[ghostNum].position-1) && ghosts[ghostNum].position !== 426) {
-        ghosts[ghostNum].position--
-        ghosts[ghostNum].moving = "left"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-    } else if (borders.includes(ghosts[ghostNum].position-30)) {
+    } else if (!tryBest && borders.includes(ghosts[ghostNum].position-30)) {
         ghosts[ghostNum].position -= 30
         ghosts[ghostNum].moving = "up"
         squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
     }
-    break
-    case "left":
-        if (ghosts[ghostNum].position === currentPacmanPos){
-            ghosts[ghostNum].position = 343
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
-            ghosts[ghostNum].position--
-            ghosts[ghostNum].moving = "left"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
-            ghosts[ghostNum].position += 30
-            ghosts[ghostNum].moving = "down"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
-            ghosts[ghostNum].position -= 30
-            ghosts[ghostNum].moving = "up"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (ghosts[ghostNum].position === target){
-            ghosts[ghostNum].targetMet = true
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        }else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
-            ghosts[ghostNum].position--
-            ghosts[ghostNum].moving = "left"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
-            ghosts[ghostNum].position++
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position+30)) {
-            ghosts[ghostNum].position += 30
-            ghosts[ghostNum].moving = "down"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        }else if (borders.includes(ghosts[ghostNum].position-30)) {
-            ghosts[ghostNum].position -= 30
-            ghosts[ghostNum].moving = "up"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
-            ghosts[ghostNum].position++
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } 
-       break
-    case "up":
-        if (ghosts[ghostNum].position === currentPacmanPos){
-            ghosts[ghostNum].position = 343
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
-            ghosts[ghostNum].position -= 30
-            ghosts[ghostNum].moving = "up"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        }else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
-            ghosts[ghostNum].position++
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
-            ghosts[ghostNum].position--
-            ghosts[ghostNum].moving = "left"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (ghosts[ghostNum].position === target){
-            ghosts[ghostNum].targetMet = true
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position-30)) {
-            ghosts[ghostNum].position -= 30
-            ghosts[ghostNum].moving = "up"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        }  else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
-            ghosts[ghostNum].position += 30
-            ghosts[ghostNum].moving = "down"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
-            ghosts[ghostNum].position++
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
-            ghosts[ghostNum].position--
-            ghosts[ghostNum].moving = "left"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position+30)) {
-            ghosts[ghostNum].position += 30
-            ghosts[ghostNum].moving = "down"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        }
-        break
-    case "right":
-        if (ghosts[ghostNum].position === currentPacmanPos){
-            ghosts[ghostNum].position = 343
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((target%30 > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440){
-            ghosts[ghostNum].position++
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30)){
-            ghosts[ghostNum].position += 30
-            ghosts[ghostNum].moving = "down"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30)){
-            ghosts[ghostNum].position -= 30
-            ghosts[ghostNum].moving = "up"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (ghosts[ghostNum].position === target){
-            ghosts[ghostNum].targetMet = true
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if ((target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
-            ghosts[ghostNum].position--
-            ghosts[ghostNum].moving = "left"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position+1)&& ghosts[ghostNum].position !== 440) {
-            ghosts[ghostNum].position++
-            ghosts[ghostNum].moving = "right"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position+30)) {
-            ghosts[ghostNum].position += 30
-            ghosts[ghostNum].moving = "down"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        }else if (borders.includes(ghosts[ghostNum].position-30)) {
-            ghosts[ghostNum].position -= 30
-            ghosts[ghostNum].moving = "up"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        } else if (borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
-            ghosts[ghostNum].position--
-            ghosts[ghostNum].moving = "left"
-            squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        }
-        break 
-}}
+}
+
+function MoveRight(ghostNum, tryBest){
+    if (tryBest && ((target%30) > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position + 1)&& ghosts[ghostNum].position !== 440){
+        ghosts[ghostNum].position++
+        ghosts[ghostNum].moving = "right"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (!tryBest && borders.includes(ghosts[ghostNum].position + 1)&& ghosts[ghostNum].position !== 440) {
+        ghosts[ghostNum].position++
+        ghosts[ghostNum].moving = "right"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    }
+}
+
+function MoveLeft(ghostNum, tryBest){
+    if (tryBest && (target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
+        ghosts[ghostNum].position--
+        ghosts[ghostNum].moving = "left"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    } else if (!tryBest && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
+        ghosts[ghostNum].position--
+        ghosts[ghostNum].moving = "left"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+    }
+}
+
+function TargetMet(ghostNum){
+    if (ghosts[ghostNum].position === target){
+        if (!ghosts[ghostNum].targetMet){
+        ghosts[ghostNum].targetMet = true
+        ghosts[ghostNum].moving = "right"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        return true
+    } else {
+        ghosts[ghostNum].position = 343
+        ghosts[ghostNum].moving = "right"
+        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        return true
+    } 
+}
+return false
+}
