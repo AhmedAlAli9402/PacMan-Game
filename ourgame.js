@@ -6,11 +6,13 @@ let ghostMoving
 let currentPacmanPos = 673
 let originalFacing = "right"
 let ghostNum = 0
+let ghostTimer = 0
+let powerUpTimer = 0
 let tryBest = true
-let ghosts = {1:{name:"blinky", position:343, moving:"left", target:31, targetMet:false, firstMove:false, tryBest:true},
-              2:{name:"pinky", position:431, moving:"right", target:55, targetMet:false, firstMove:true, tryBest:true},
-               3:{name:"scaredghost", position:433, moving:"right", target:865, targetMet:false, firstMove:true, tryBest:true},
-                4:{name:"inky", position:435, moving:"right", target:841, targetMet:false, firstMove:true, tryBest:true}}
+let ghosts = {1:{name:"blinky", position:343,originalposition:343, moving:"left", target:31, targetMet:false, firstMove:false, scared:false, interval:0, goingBack:false},
+2:{name:"pinky", position:431, originalposition:431,moving:"right", target:55, targetMet:false, firstMove:false, scared:false, interval:30, goingBack:false},
+ 3:{name:"clyde", position:433, originalposition:433, moving:"right", target:865, targetMet:false, firstMove:false, scared:false, interval:50, goingBack:false},
+  4:{name:"inky", position:435,originalposition:435, moving:"right", target:841, targetMet:false, firstMove:false, scared:false, interval:70, goingBack:false}}
 let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
     48,49,50,51,52,53,54,55,61,66, 96, 126, 156, 186, 216,
      246, 276, 306,  336,366, 396, 426, 456, 486, 516, 546,
@@ -35,14 +37,8 @@ let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
              865,841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851,
          852, 853, 854, 855, 856, 857, 858,625, 655,181,211,241,242,243,
          244,245,699,729,707,737,41,91,121,197,227, 859, 860, 861, 862,
-          863, 864, 822, 403,431,435,433]
-function StartPosition(){
-    ghosts[1].position = 403
-    ghosts[2].position = 431
-    ghosts[3].position = 433
-    ghosts[4].position = 435
-    currentPacmanPos = 673
-}
+          863, 864, 822, 403,431,435,433, 401, 405]
+
 for (let i=0; i<width*width;i++){
    const square = document.createElement('div')
    square.setAttribute("id", i)
@@ -51,26 +47,29 @@ for (let i=0; i<width*width;i++){
 const squares = Array.from(document.querySelectorAll('.grid div'))
 
 function createroute(){
-for (i=0;i<borders.length-4;i++){
+for (i=0;i<borders.length-6;i++){
     squares[borders[i]].classList.add('pellet')
 }
 }createroute()
 
 squares[91].classList.replace('pellet', 'powerpellet')
-squares[125].classList.replace('pellet', 'powerpellet')
+squares[115].classList.replace('pellet', 'powerpellet')
 squares[661].classList.replace('pellet', 'powerpellet')
 squares[685].classList.replace('pellet', 'powerpellet')
 
 function pacmanPos(pos){
+    if (squares[currentPacmanPos].classList.contains('powerpellet')){
+        squares[currentPacmanPos].classList.remove('powerpellet')
+        PowerUp(true)
+    }
     squares[currentPacmanPos].classList.remove(originalFacing)
     squares[currentPacmanPos].classList.remove('pacman')
     squares[pos].classList.add('pacman')
     squares[pos].classList.remove('pellet')
     squares[pos].classList.add(facing)
     currentPacmanPos = pos
-    
 }
-function movePacman() {  
+function movePacman(change) {  
     if (facing === "right" && borders.includes(currentPacmanPos + 1)){
     updatePacmanPos = currentPacmanPos + 1
     pacmanPos(updatePacmanPos)
@@ -90,183 +89,252 @@ function movePacman() {
 } else {
     facing = originalFacing
 }
+ghostTimer++
+powerUpTimer--
+if (powerUpTimer === 0){
+    PowerUp(false)
+}
+for (i=2;i<5;i++){
+if (ghostTimer === ghosts[i].interval){
+    ghosts[i].interval = 5
+    ghosts[i].firstMove = true
+}}
+
+if (!change){
 moveGhosts(1)
 moveGhosts(2)
+moveGhosts(3)
+moveGhosts(4)}
 }
 function changeDirection(e){
     switch(e.key){
         case 'ArrowUp':
             if (facing !== "up"){
                 facing = "up"
-                movePacman()
+                movePacman(true)
                 break
             } 
+            break
         case 'ArrowRight':
             if (facing !== "right"){
                 facing = "right"
-                movePacman()
+                movePacman(true)
                 break
             } 
+            break
         case 'ArrowDown':
             if (facing !== "down"){
                 facing = "down"
-                movePacman()
+                movePacman(true)
                 break
             } 
+            break
         case 'ArrowLeft':
             if (facing !== "left"){
                 facing = "left"
-                movePacman()
+                movePacman(true)
                 break
             }
+            break
     }
 }
 squares[ghosts[1].position].classList.add(ghosts[1].name)
 squares[ghosts[2].position].classList.add(ghosts[2].name)
 squares[ghosts[3].position].classList.add(ghosts[3].name)
 squares[ghosts[4].position].classList.add(ghosts[4].name)
+squares[currentPacmanPos].classList.add('pacman')
 document.addEventListener('keydown', changeDirection)
 
 pacmanMoving = setInterval(movePacman, 200);
 // ghostMoving = setInterval(moveGhosts(1), 200);
 
 function moveGhosts(ghostNum){
-    if (ghosts[ghostNum].firstMove){
-        squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
-        ghosts[ghostNum].position = 343
-        squares[[ghosts[ghostNum].position]].classList.add(ghosts[ghostNum].name)
-        ghosts[ghostNum].firstMove = false
-        console.log(ghosts)
-
-    } 
+    let name = ghosts[ghostNum].name
     let target = ghosts[ghostNum].target
     if (ghosts[ghostNum].targetMet){
     target = currentPacmanPos
 }
-squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
+if (ghosts[ghostNum].scared){
+    squares[ghosts[ghostNum].position].classList.remove(name)
+    name = "scaredghost"
+    if (ghosts[ghostNum].targetMet){
+        target = 865 - currentPacmanPos
+    }
+}
+if (ghosts[ghostNum].firstMove){
+    squares[ghosts[ghostNum].position].classList.remove(name)
+    ghosts[ghostNum].position = 343
+    squares[[ghosts[ghostNum].position]].classList.add(name)
+    ghosts[ghostNum].firstMove = false
+} 
+squares[ghosts[ghostNum].position].classList.remove(name)
 switch (ghosts[ghostNum].moving){
     case "down":
-        if (TargetMet(ghostNum, target)){
-        } else if (MoveDown(ghostNum, true, target)){
-        } else if (MoveRight(ghostNum, true, target)){
-        } else if (MoveLeft(ghostNum, true, target)){
-        } else if (MoveDown(ghostNum, false, target)){
-        } else if (MoveUp(ghostNum, true, target)){
-        } else if (MoveRight(ghostNum, false, target)){
-        } else if (MoveLeft(ghostNum, false, target)){
-        } else if (MoveUp(ghostNum, false, target)){}
+        if (TargetMet(ghostNum, target, name)){
+        } else if (MoveDown(ghostNum, true, target, name)){
+        } else if (MoveRight(ghostNum, true, target, name)){
+        } else if (MoveLeft(ghostNum, true, target, name)){
+        } else if (MoveDown(ghostNum, false, target, name)){
+        } else if (MoveUp(ghostNum, true, target, name)){
+        } else if (MoveRight(ghostNum, false, target, name)){
+        } else if (MoveLeft(ghostNum, false, target, name)){
+        } else if (MoveUp(ghostNum, false, target, name)){}
         break
     case "left":
-        if (TargetMet(ghostNum, target)){
-        } else if (MoveLeft(ghostNum, true, target)){
-        } else if (MoveDown(ghostNum, true, target)){
-        } else if (MoveUp(ghostNum, true, target)){
-        } else if (MoveLeft(ghostNum, false, target)){
-        } else if (MoveRight(ghostNum, true, target)){
-        } else if (MoveDown(ghostNum, false, target)){
-        } else if (MoveUp(ghostNum, false, target)){
-        } else if (MoveRight(ghostNum, false, target)){}
+        if (TargetMet(ghostNum, target, name)){
+        } else if (MoveLeft(ghostNum, true, target, name)){
+        } else if (MoveDown(ghostNum, true, target, name)){
+        } else if (MoveUp(ghostNum, true, target, name)){
+        } else if (MoveLeft(ghostNum, false, target, name)){
+        } else if (MoveRight(ghostNum, true, target, name)){
+        } else if (MoveDown(ghostNum, false, target, name)){
+        } else if (MoveUp(ghostNum, false, target, name)){
+        } else if (MoveRight(ghostNum, false, target, name)){}
         break
     case "up":
-        if (TargetMet(ghostNum, target)){
-        } else if (MoveUp(ghostNum, true, target)){
-        } else if (MoveRight(ghostNum, true, target)){
-        } else if (MoveLeft(ghostNum, true, target)){
-        } else if (MoveUp(ghostNum, false, target)){
-        } else if (MoveDown(ghostNum, true, target)){
-        } else if (MoveRight(ghostNum, false, target)){
-        } else if (MoveLeft(ghostNum, false, target)){
-        } else if (MoveDown(ghostNum, false, target)){}
+        if (TargetMet(ghostNum, target, name)){
+        } else if (MoveUp(ghostNum, true, target, name)){
+        } else if (MoveRight(ghostNum, true, target, name)){
+        } else if (MoveLeft(ghostNum, true, target, name)){
+        } else if (MoveUp(ghostNum, false, target, name)){
+        } else if (MoveDown(ghostNum, true, target, name)){
+        } else if (MoveRight(ghostNum, false, target, name)){
+        } else if (MoveLeft(ghostNum, false, target, name)){
+        } else if (MoveDown(ghostNum, false, target, name)){}
         break
     case "right":
-        if (TargetMet(ghostNum, target)){
-        } else if (MoveRight(ghostNum, true, target)){
-        } else if (MoveDown(ghostNum, true, target)){
-        } else if (MoveUp(ghostNum, true, target)){
-        } else if (MoveRight(ghostNum, false, target)){
-        } else if (MoveLeft(ghostNum, true, target)){
-        } else if (MoveDown(ghostNum, false, target)){
-        } else if (MoveUp(ghostNum, false, target)){
-        } else if (MoveRight(ghostNum, false, target)){}
+        if (TargetMet(ghostNum, target, name)){
+        } else if (MoveRight(ghostNum, true, target, name)){
+        } else if (MoveDown(ghostNum, true, target, name)){
+        } else if (MoveUp(ghostNum, true, target, name)){
+        } else if (MoveRight(ghostNum, false, target, name)){
+        } else if (MoveLeft(ghostNum, true, target, name)){
+        } else if (MoveDown(ghostNum, false, target, name)){
+        } else if (MoveUp(ghostNum, false, target, name)){
+        } else if (MoveRight(ghostNum, false, target, name)){}
         break
-}
-    TargetMet(ghostNum, target)
-}
-
-function MoveDown(ghostNum, tryBest, target){
-    if (tryBest && ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30))){
-        ghosts[ghostNum].position += 30
-        ghosts[ghostNum].moving = "down"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        return true
-    } else if (!tryBest && borders.includes(ghosts[ghostNum].position+30)) {
-        ghosts[ghostNum].position += 30
-        ghosts[ghostNum].moving = "down"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        return true
-    }
-    return false
+}   
+    if (!ghosts[ghostNum].goingBack){
+    TargetMet(ghostNum, target, name)}
+    ghosts[ghostNum].goingBack = false
 }
 
-function MoveUp(ghostNum, tryBest, target){
-    if (tryBest && ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30))){
-        ghosts[ghostNum].position -= 30
-        ghosts[ghostNum].moving = "up"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        return true
-    } else if (!tryBest && borders.includes(ghosts[ghostNum].position-30)) {
-        ghosts[ghostNum].position -= 30
-        ghosts[ghostNum].moving = "up"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
-        return true
-    }
-    return false
-}
 
-function MoveRight(ghostNum, tryBest, target){
+function MoveRight(ghostNum, tryBest, target, name){
     if (tryBest && ((target%30) > ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position + 1)&& ghosts[ghostNum].position !== 440){
         ghosts[ghostNum].position++
         ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        squares[ghosts[ghostNum].position].classList.add(name)
         return true
     } else if (!tryBest && borders.includes(ghosts[ghostNum].position + 1)&& ghosts[ghostNum].position !== 440) {
         ghosts[ghostNum].position++
         ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        squares[ghosts[ghostNum].position].classList.add(name)
         return true
     }
     return false
 }
 
-function MoveLeft(ghostNum, tryBest, target){
+function MoveDown(ghostNum, tryBest, target, name){
+    if (tryBest && ((Math.floor(target/30) > Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position + 30))){
+        ghosts[ghostNum].position += 30
+        ghosts[ghostNum].moving = "down"
+        squares[ghosts[ghostNum].position].classList.add(name)
+        return true
+    } else if (!tryBest && borders.includes(ghosts[ghostNum].position+30)) {
+        ghosts[ghostNum].position += 30
+        ghosts[ghostNum].moving = "down"
+        squares[ghosts[ghostNum].position].classList.add(name)
+        return true
+    }
+    return false
+}
+
+function MoveUp(ghostNum, tryBest, target, name){
+    if (tryBest && ((Math.floor(target/30) < Math.floor(ghosts[ghostNum].position/30)) && borders.includes(ghosts[ghostNum].position - 30))){
+        ghosts[ghostNum].position -= 30
+        ghosts[ghostNum].moving = "up"
+        squares[ghosts[ghostNum].position].classList.add(name)
+        return true
+    } else if (!tryBest && borders.includes(ghosts[ghostNum].position-30)) {
+        ghosts[ghostNum].position -= 30
+        ghosts[ghostNum].moving = "up"
+        squares[ghosts[ghostNum].position].classList.add(name)
+        return true
+    }
+    return false
+}
+
+function MoveLeft(ghostNum, tryBest, target, name){
     if (tryBest && (target%30 < ghosts[ghostNum].position%30) && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426){
         ghosts[ghostNum].position--
         ghosts[ghostNum].moving = "left"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        squares[ghosts[ghostNum].position].classList.add(name)
         return true
     } else if (!tryBest && borders.includes(ghosts[ghostNum].position-1)&& ghosts[ghostNum].position !== 426) {
         ghosts[ghostNum].position--
         ghosts[ghostNum].moving = "left"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        squares[ghosts[ghostNum].position].classList.add(name)
         return true
     }
     return false
 }
 
-function TargetMet(ghostNum, target){
-    if (ghosts[ghostNum].position === target){
-        if (!ghosts[ghostNum].targetMet){
+function TargetMet(ghostNum, target, name){
+    if (ghosts[ghostNum].position === target || ghosts[ghostNum].position === currentPacmanPos){
+        if (!ghosts[ghostNum].targetMet && ghosts[ghostNum].position !== currentPacmanPos){
         ghosts[ghostNum].targetMet = true
         ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        squares[ghosts[ghostNum].position].classList.add(name)
         return true
     } else {
-        squares[ghosts[ghostNum].position].classList.remove(ghosts[ghostNum].name)
-        ghosts[ghostNum].position = 343
+        if (ghosts[ghostNum].scared){
+            console.log(ghosts)
+            squares[ghosts[ghostNum].position].classList.remove("scaredghost")
+            squares[ghosts[ghostNum].originalposition].classList.add(ghosts[ghostNum].name)
+            ghosts[ghostNum].interval = ghostTimer + 27
+            ghosts[ghostNum].firstMove = true
+            ghosts[ghostNum].position = ghosts[ghostNum].originalposition
+            ghosts[ghostNum].scared = false
+            ghosts[ghostNum].goingBack = true
+            return true
+        } else{
+        squares[ghosts[ghostNum].position].classList.remove(name)
         ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(ghosts[ghostNum].name)
+        squares[ghosts[ghostNum].position].classList.add(name)
+        StartPosition()
         return true
+    }
     } 
 }
 return false
+}
+
+function PowerUp(up){
+    if (up){
+        for (let i=1;i<=4;i++){
+        ghosts[i].scared = true
+}
+        powerUpTimer = 50
+    } else {
+        for (let i=1;i<=4;i++){
+            ghosts[i].scared = false
+            squares[ghosts[i].position].classList.remove("scaredghost")
+    }
+    }
+}
+
+function StartPosition(){
+    squares[currentPacmanPos].removeAttribute("class")
+    for (let i=1;i<5;i++){
+    squares[ghosts[i].position].removeAttribute("class")
+}
+    ghostTimer = 0
+    ghosts = {1:{name:"blinky", position:343,originalposition:343, moving:"left", target:31, targetMet:false, firstMove:false, scared:false, interval:0, goingBack:false},
+              2:{name:"pinky", position:431, originalposition:431,moving:"right", target:55, targetMet:false, firstMove:false, scared:false, interval:30, goingBack:false},
+               3:{name:"clyde", position:433, originalposition:433, moving:"right", target:865, targetMet:false, firstMove:false, scared:false, interval:50, goingBack:false},
+                4:{name:"inky", position:435,originalposition:435, moving:"right", target:841, targetMet:false, firstMove:false, scared:false, interval:70, goingBack:false}}
+    currentPacmanPos = 673
+    facing = "right"
+    squares[currentPacmanPos].classList.add('pacman')
 }
