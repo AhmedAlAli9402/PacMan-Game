@@ -8,7 +8,11 @@ let originalFacing = "right"
 let ghostNum = 0
 let ghostTimer = 0
 let powerUpTimer = 0
+let pelletCount = 0
+let lives = 3
 let tryBest = true
+const resultDisplay = document.querySelector('.score')
+let score = 0
 let ghosts = {1:{name:"blinky", position:343,originalposition:343, moving:"left", target:31, targetMet:false, firstMove:false, scared:false, interval:0, goingBack:false},
 2:{name:"pinky", position:431, originalposition:431,moving:"right", target:55, targetMet:false, firstMove:false, scared:false, interval:30, goingBack:false},
  3:{name:"clyde", position:433, originalposition:433, moving:"right", target:865, targetMet:false, firstMove:false, scared:false, interval:50, goingBack:false},
@@ -60,16 +64,27 @@ squares[685].classList.replace('pellet', 'powerpellet')
 function pacmanPos(pos){
     if (squares[currentPacmanPos].classList.contains('powerpellet')){
         squares[currentPacmanPos].classList.remove('powerpellet')
+        pelletCount++
+        score += 20
+        resultDisplay.innerHTML = score
         PowerUp(true)
     }
     squares[currentPacmanPos].classList.remove(originalFacing)
     squares[currentPacmanPos].classList.remove('pacman')
     squares[pos].classList.add('pacman')
+    if (squares[pos].classList.contains('pellet')){
     squares[pos].classList.remove('pellet')
+    pelletCount++
+    score += 10
+    resultDisplay.innerHTML = "Score:  " + score
+    }
     squares[pos].classList.add(facing)
     currentPacmanPos = pos
 }
 function movePacman(change) {  
+    if (pelletCount === 304){
+        youWin()
+    }
     if (facing === "right" && borders.includes(currentPacmanPos + 1)){
     updatePacmanPos = currentPacmanPos + 1
     pacmanPos(updatePacmanPos)
@@ -105,6 +120,7 @@ moveGhosts(1)
 moveGhosts(2)
 moveGhosts(3)
 moveGhosts(4)}
+animate()
 }
 function changeDirection(e){
     switch(e.key){
@@ -292,8 +308,8 @@ function TargetMet(ghostNum, target, name){
             console.log(ghosts)
             squares[ghosts[ghostNum].position].classList.remove("scaredghost")
             squares[ghosts[ghostNum].originalposition].classList.add(ghosts[ghostNum].name)
-            ghosts[ghostNum].interval = ghostTimer + 27
-            ghosts[ghostNum].firstMove = true
+            ghosts[ghostNum].interval = ghostTimer + 15
+            ghosts[ghostNum].firstMove = false
             ghosts[ghostNum].position = ghosts[ghostNum].originalposition
             ghosts[ghostNum].scared = false
             ghosts[ghostNum].goingBack = true
@@ -325,6 +341,10 @@ function PowerUp(up){
 }
 
 function StartPosition(){
+    lives--
+    if (lives === 0){
+        clearInterval(pacmanMoving)
+    }
     squares[currentPacmanPos].removeAttribute("class")
     for (let i=1;i<5;i++){
     squares[ghosts[i].position].removeAttribute("class")
@@ -338,3 +358,36 @@ function StartPosition(){
     facing = "right"
     squares[currentPacmanPos].classList.add('pacman')
 }
+
+function youWin(){
+    clearInterval(pacmanMoving)
+}
+
+// const element = document.getElementById("some-element-you-want-to-animate");
+// let start, previousTimeStamp;
+// let done = false;
+
+// function step(timeStamp) {
+//   if (start === undefined) {
+//     start = timeStamp;
+//   }
+//   const elapsed = timeStamp - start;
+
+//   if (previousTimeStamp !== timeStamp) {
+//     // Math.min() is used here to make sure the element stops at exactly 200px
+//     const count = Math.min(0.1 * elapsed, 200);
+//     element.style.transform = `translateX(${count}px)`;
+//     if (count === 200) done = true;
+//   }
+
+//   if (elapsed < 2000) {
+//     // Stop the animation after 2 seconds
+//     previousTimeStamp = timeStamp;
+//     if (!done) {
+//       window.requestAnimationFrame(step);
+//     }
+//   }
+// }
+function animate(){
+window.requestAnimationFrame();}
+animate()
