@@ -10,8 +10,13 @@ let ghostTimer = 0
 let powerUpTimer = 0
 let pelletCount = 0
 let lives = 3
+let mseconds = 0
+let seconds = 0
+let minutes = 0 
+let isPaused = false
 let tryBest = true
 const resultDisplay = document.querySelector('.score')
+const timeDisplay = document.querySelector('.time')
 let score = 0
 let ghosts = {1:{name:"blinky", position:343,originalposition:343, moving:"left", target:31, targetMet:false, firstMove:false, scared:false, interval:0, goingBack:false},
 2:{name:"pinky", position:431, originalposition:431,moving:"right", target:55, targetMet:false, firstMove:false, scared:false, interval:30, goingBack:false},
@@ -42,7 +47,7 @@ let borders = [31,32,33,34,35,36,37,38,39,40,42,45,46,47,
          852, 853, 854, 855, 856, 857, 858,625, 655,181,211,241,242,243,
          244,245,699,729,707,737,41,91,121,197,227, 859, 860, 861, 862,
           863, 864, 822, 403,431,435,433, 401, 405]
-
+var pause = document.getElementById("pausegame")
 for (let i=0; i<width*width;i++){
    const square = document.createElement('div')
    square.setAttribute("id", i)
@@ -52,6 +57,7 @@ const squares = Array.from(document.querySelectorAll('.grid div'))
 
 function createroute(){
 for (i=0;i<borders.length-6;i++){
+    console.log(borders.length)
     squares[borders[i]].classList.add('pellet')
 }
 }createroute()
@@ -62,8 +68,8 @@ squares[661].classList.replace('pellet', 'powerpellet')
 squares[685].classList.replace('pellet', 'powerpellet')
 
 function pacmanPos(pos){
-    if (squares[currentPacmanPos].classList.contains('powerpellet')){
-        squares[currentPacmanPos].classList.remove('powerpellet')
+    if (squares[pos].classList.contains('powerpellet')){
+        squares[pos].classList.remove('powerpellet')
         pelletCount++
         score += 20
         resultDisplay.innerHTML = score
@@ -80,9 +86,24 @@ function pacmanPos(pos){
     }
     squares[pos].classList.add(facing)
     currentPacmanPos = pos
+    if (pos === 424){
+        squares[pos].classList.remove('pacman')
+        currentPacmanPos = 442
+        squares[currentPacmanPos].classList.add('pacman')
+    }
+    if (pos === 442){
+        squares[pos].classList.remove('pacman')
+        currentPacmanPos = 424
+        squares[currentPacmanPos].classList.add('pacman')
+    }
 }
 function movePacman(change) {  
-    if (pelletCount === 304){
+    mseconds += 0.2 
+    if (mseconds === 1){
+        timer(seconds)
+        mseconds = 0
+    }
+    if (pelletCount === 277){
         youWin()
     }
     if (facing === "right" && borders.includes(currentPacmanPos + 1)){
@@ -123,6 +144,7 @@ moveGhosts(4)}
 animate()
 }
 function changeDirection(e){
+    playGame()
     switch(e.key){
         case 'ArrowUp':
             if (facing !== "up"){
@@ -305,7 +327,6 @@ function TargetMet(ghostNum, target, name){
         return true
     } else {
         if (ghosts[ghostNum].scared){
-            console.log(ghosts)
             squares[ghosts[ghostNum].position].classList.remove("scaredghost")
             squares[ghosts[ghostNum].originalposition].classList.add(ghosts[ghostNum].name)
             ghosts[ghostNum].interval = ghostTimer + 15
@@ -357,37 +378,36 @@ function StartPosition(){
     currentPacmanPos = 673
     facing = "right"
     squares[currentPacmanPos].classList.add('pacman')
+    pauseGame()
 }
 
 function youWin(){
     clearInterval(pacmanMoving)
 }
 
-// const element = document.getElementById("some-element-you-want-to-animate");
-// let start, previousTimeStamp;
-// let done = false;
+function timer(){
+    seconds++
+    if (seconds === 60){
+        minutes++
+        seconds = 0
+    }
+    timeDisplay.innerHTML = "Time: " + minutes + "M " + seconds + "S"
+}
 
-// function step(timeStamp) {
-//   if (start === undefined) {
-//     start = timeStamp;
-//   }
-//   const elapsed = timeStamp - start;
+function pauseGame(){
+    if (!isPaused){
+    isPaused = true
+    clearInterval(pacmanMoving)
+}
+}
 
-//   if (previousTimeStamp !== timeStamp) {
-//     // Math.min() is used here to make sure the element stops at exactly 200px
-//     const count = Math.min(0.1 * elapsed, 200);
-//     element.style.transform = `translateX(${count}px)`;
-//     if (count === 200) done = true;
-//   }
+function playGame(){
+    if (isPaused){
+        isPaused = false
+        pacmanMoving = setInterval(movePacman, 200)
+    } 
+}
 
-//   if (elapsed < 2000) {
-//     // Stop the animation after 2 seconds
-//     previousTimeStamp = timeStamp;
-//     if (!done) {
-//       window.requestAnimationFrame(step);
-//     }
-//   }
-// }
 function animate(){
 window.requestAnimationFrame();}
 animate()

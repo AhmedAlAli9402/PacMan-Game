@@ -2,11 +2,31 @@ body{
     background-color: rgb(0, 0, 63);
 }
 
+h1 {
+    color:antiquewhite;
+    margin-left: 10rem;
+}
+
+button {
+    margin-left: 10rem;
+    margin-top: -8rem;
+    font-size: 1.9rem
+}
+
 .score{
+    margin-left: 10rem;
     color:blanchedalmond;
     margin-top:-52rem;
 }
 
+ i {
+   size: 200rem;
+}
+
+.time{
+    margin-left: 10rem;
+    color:blanchedalmond;
+}
 .grid {
     float:center;
     width:900px;
