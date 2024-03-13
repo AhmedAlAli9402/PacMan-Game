@@ -13,10 +13,12 @@ let lives = 3
 let mseconds = 0
 let seconds = 0
 let minutes = 0 
+let addghostscore
 let isPaused = false
 let tryBest = true
 const resultDisplay = document.querySelector('.score')
 const timeDisplay = document.querySelector('.time')
+const addscoreDisplay = document.querySelector('.addscore')
 let score = 0
 let ghosts = {1:{name:"blinky", position:343,originalposition:343, moving:"left", target:31, targetMet:false, firstMove:false, scared:false, interval:0, goingBack:false},
 2:{name:"pinky", position:431, originalposition:431,moving:"right", target:55, targetMet:false, firstMove:false, scared:false, interval:30, goingBack:false},
@@ -60,8 +62,8 @@ for (i=0;i<borders.length-6;i++){
     console.log(borders.length)
     squares[borders[i]].classList.add('pellet')
 }
-}createroute()
-
+}
+createroute()
 squares[91].classList.replace('pellet', 'powerpellet')
 squares[115].classList.replace('pellet', 'powerpellet')
 squares[661].classList.replace('pellet', 'powerpellet')
@@ -72,7 +74,9 @@ function pacmanPos(pos){
         squares[pos].classList.remove('powerpellet')
         pelletCount++
         score += 20
-        resultDisplay.innerHTML = score
+        addscoreDisplay.innerHTML = "+" + 20
+        resultDisplay.innerHTML = "Score:  " + score
+        addscoreDisplay.innerHTML = 0
         PowerUp(true)
     }
     squares[currentPacmanPos].classList.remove(originalFacing)
@@ -82,6 +86,7 @@ function pacmanPos(pos){
     squares[pos].classList.remove('pellet')
     pelletCount++
     score += 10
+    addscoreDisplay.innerHTML = "+" + 10
     resultDisplay.innerHTML = "Score:  " + score
     }
     squares[pos].classList.add(facing)
@@ -98,6 +103,7 @@ function pacmanPos(pos){
     }
 }
 function movePacman(change) {  
+    addscoreDisplay.innerHTML = 0
     mseconds += 0.2 
     if (mseconds === 1){
         timer(seconds)
@@ -106,6 +112,12 @@ function movePacman(change) {
     if (pelletCount === 277){
         youWin()
     }
+    if (!change){
+        moveGhosts(1)
+        moveGhosts(2)
+        moveGhosts(3)
+        moveGhosts(4)}
+
     if (facing === "right" && borders.includes(currentPacmanPos + 1)){
     updatePacmanPos = currentPacmanPos + 1
     pacmanPos(updatePacmanPos)
@@ -136,11 +148,6 @@ if (ghostTimer === ghosts[i].interval){
     ghosts[i].firstMove = true
 }}
 
-if (!change){
-moveGhosts(1)
-moveGhosts(2)
-moveGhosts(3)
-moveGhosts(4)}
 animate()
 }
 function changeDirection(e){
@@ -329,6 +336,10 @@ function TargetMet(ghostNum, target, name){
         if (ghosts[ghostNum].scared){
             squares[ghosts[ghostNum].position].classList.remove("scaredghost")
             squares[ghosts[ghostNum].originalposition].classList.add(ghosts[ghostNum].name)
+            sleep(300)
+            squares[ghosts[ghostNum].originalposition].classList.add(addghostscore)
+            score += addghostscore
+            addghostscore = addghostscore * 2
             ghosts[ghostNum].interval = ghostTimer + 15
             ghosts[ghostNum].firstMove = false
             ghosts[ghostNum].position = ghosts[ghostNum].originalposition
@@ -353,6 +364,7 @@ function PowerUp(up){
         ghosts[i].scared = true
 }
         powerUpTimer = 50
+        addghostscore = 200
     } else {
         for (let i=1;i<=4;i++){
             ghosts[i].scared = false
@@ -402,11 +414,18 @@ function pauseGame(){
 }
 
 function playGame(){
-    if (isPaused){
+    if (isPaused && lives > 0){
         isPaused = false
         pacmanMoving = setInterval(movePacman, 200)
     } 
 }
+
+function sleep(miliseconds) {
+    var currentTime = new Date().getTime();
+ 
+    while (currentTime + miliseconds >= new Date().getTime()) {
+    }
+ }
 
 function animate(){
 window.requestAnimationFrame();}
