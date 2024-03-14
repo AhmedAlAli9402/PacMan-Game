@@ -9,13 +9,14 @@ h1 {
 
 h2{
     color:antiquewhite;
-    margin-left: 18rem;
+    margin-left: 16rem;
 }
 
 button {
     margin-left: 10rem;
     margin-top: -8rem;
-    font-size: 1.9rem
+    font-size: 1.9rem;
+    color: rgb(0, 0, 63)
 }
 
 .score{
@@ -28,6 +29,9 @@ button {
    size: 200rem;
 }
 
+.dead {
+    color: rgb(0, 0, 63)
+}
 .time{
     margin-left: 10rem;
     color:blanchedalmond;

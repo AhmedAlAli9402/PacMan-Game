@@ -89,17 +89,28 @@ function pacmanPos(pos){
     addscoreDisplay.innerHTML = "+" + 10
     resultDisplay.innerHTML = "Score:  " + score
     }
+    if (squares[pos].classList.contains('scaredghost')){
+        for (let i=1;i<5;i++){
+            if (ghosts[i].position === pos){
+                ghosts[i].scared = true
+                TargetMet(i, ghosts[i].target, ghosts[i].name)
+            } 
+        }
+    }
+
     squares[pos].classList.add(facing)
     currentPacmanPos = pos
     if (pos === 424){
         squares[pos].classList.remove('pacman')
         currentPacmanPos = 442
         squares[currentPacmanPos].classList.add('pacman')
+        squares[currentPacmanPos].classList.remove('pellet')
     }
     if (pos === 442){
         squares[pos].classList.remove('pacman')
         currentPacmanPos = 424
         squares[currentPacmanPos].classList.add('pacman')
+        squares[currentPacmanPos].classList.remove('pellet')
     }
 }
 function movePacman(change) {  
@@ -108,9 +119,6 @@ function movePacman(change) {
     if (mseconds === 1){
         timer(seconds)
         mseconds = 0
-    }
-    if (pelletCount === 277){
-        youWin()
     }
     if (!change){
         moveGhosts(1)
@@ -147,8 +155,10 @@ if (ghostTimer === ghosts[i].interval){
     ghosts[i].interval = 5
     ghosts[i].firstMove = true
 }}
-
-animate()
+// requestAnimationFrame(movePacman)
+if (pelletCount === 277){
+    youWin()
+}
 }
 function changeDirection(e){
     playGame()
@@ -212,6 +222,14 @@ if (ghosts[ghostNum].firstMove){
     squares[[ghosts[ghostNum].position]].classList.add(name)
     ghosts[ghostNum].firstMove = false
 } 
+    for (let i=1;i<5;i++){
+        if (ghostNum === i){
+            continue
+        }
+        if (ghosts[i].position === ghosts[ghostNum].position){
+            ghosts[ghostNum].moving = "right"
+        } 
+    }
 squares[ghosts[ghostNum].position].classList.remove(name)
 switch (ghosts[ghostNum].moving){
     case "down":
@@ -262,6 +280,7 @@ switch (ghosts[ghostNum].moving){
     if (!ghosts[ghostNum].goingBack){
     TargetMet(ghostNum, target, name)}
     ghosts[ghostNum].goingBack = false
+    // requestAnimationFrame(moveGhosts)
 }
 
 
@@ -336,7 +355,7 @@ function TargetMet(ghostNum, target, name){
         if (ghosts[ghostNum].scared){
             squares[ghosts[ghostNum].position].classList.remove("scaredghost")
             squares[ghosts[ghostNum].originalposition].classList.add(ghosts[ghostNum].name)
-            sleep(300)
+            // sleep(300)
             squares[ghosts[ghostNum].originalposition].classList.add(addghostscore)
             score += addghostscore
             addghostscore = addghostscore * 2
@@ -349,7 +368,8 @@ function TargetMet(ghostNum, target, name){
         } else{
         squares[ghosts[ghostNum].position].classList.remove(name)
         ghosts[ghostNum].moving = "right"
-        squares[ghosts[ghostNum].position].classList.add(name)
+        // squares[ghosts[ghostNum].position].classList.add(name)
+        // sleep(500)
         StartPosition()
         return true
     }
@@ -374,9 +394,14 @@ function PowerUp(up){
 }
 
 function StartPosition(){
+    var life = document.getElementById("life" + lives)
+    console.log(life)
+    life.classList.add("dead")
     lives--
     if (lives === 0){
         clearInterval(pacmanMoving)
+        addscoreDisplay.innerHTML = ''
+        resultDisplay.innerHTML = "GameOver"
     }
     squares[currentPacmanPos].removeAttribute("class")
     for (let i=1;i<5;i++){
@@ -395,6 +420,8 @@ function StartPosition(){
 
 function youWin(){
     clearInterval(pacmanMoving)
+    addscoreDisplay.innerHTML = ''
+    resultDisplay.innerHTML = "YOU WIN"
 }
 
 function timer(){
@@ -417,16 +444,20 @@ function playGame(){
     if (isPaused && lives > 0){
         isPaused = false
         pacmanMoving = setInterval(movePacman, 200)
-    } 
+    } else {
+
+    }
 }
 
-function sleep(miliseconds) {
-    var currentTime = new Date().getTime();
+// function sleep(miliseconds) {
+//     var currentTime = new Date().getTime();
  
-    while (currentTime + miliseconds >= new Date().getTime()) {
-    }
+//     while (currentTime + miliseconds >= new Date().getTime()) {
+//     }
+//  }
+
+ function restartGame(){
+    window.location.reload()
  }
 
-function animate(){
-window.requestAnimationFrame();}
-animate()
+window.requestAnimationFrame(movePacman)
