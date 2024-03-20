@@ -55,8 +55,12 @@ var pause = document.getElementById("pausegame")
 
 CreateSquare()
 const squares = Array.from(document.querySelectorAll('.grid div'))
+document.addEventListener('keydown', changeDirection)
+pacmanMoving = setInterval(movePacman, 200);
 CreateRoute()
 AddPowerPellet()
+AddingPlayers()
+animate()
 
 function CreateSquare(){
 for (let i=0; i<width*width;i++){
@@ -74,12 +78,21 @@ console.log(borders.length)
 squares[borders[i]].classList.add('pellet')
 }
 }
+
 function AddPowerPellet(){
 squares[91].classList.replace('pellet', 'powerpellet')
 squares[115].classList.replace('pellet', 'powerpellet')
 squares[661].classList.replace('pellet', 'powerpellet')
 squares[685].classList.replace('pellet', 'powerpellet')
 }
+
+function AddingPlayers(){
+    squares[ghosts[1].position].classList.add(ghosts[1].name)
+    squares[ghosts[2].position].classList.add(ghosts[2].name)
+    squares[ghosts[3].position].classList.add(ghosts[3].name)
+    squares[ghosts[4].position].classList.add(ghosts[4].name)
+    squares[currentPacmanPos].classList.add('pacman')
+    } 
 
 function PacmanEatPellet(pos, power){
 if (power){
@@ -109,6 +122,7 @@ addscoreDisplay.innerHTML = "+" + 10
 resultDisplay.innerHTML = "Score:  " + score
 }
 }
+
 function PacmanPosition(pos){
 if (squares[pos].classList.contains('powerpellet')){
     PacmanEatPellet(pos, true)
@@ -142,8 +156,6 @@ if (pos === 442){
     squares[currentPacmanPos].classList.remove('pellet')
 }
 }
-
-animate()
 
 function movePacman(change) {
 let updatePacmanPos
@@ -224,15 +236,6 @@ switch(e.key){
         break
 }
 }
-squares[ghosts[1].position].classList.add(ghosts[1].name)
-squares[ghosts[2].position].classList.add(ghosts[2].name)
-squares[ghosts[3].position].classList.add(ghosts[3].name)
-squares[ghosts[4].position].classList.add(ghosts[4].name)
-squares[currentPacmanPos].classList.add('pacman')
-document.addEventListener('keydown', changeDirection)
-
-pacmanMoving = setInterval(movePacman, 200);
-// ghostMoving = setInterval(moveGhosts(1), 200);
 
 function moveGhosts(ghostNum){
 let name = ghosts[ghostNum].name
