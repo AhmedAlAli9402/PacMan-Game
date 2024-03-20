@@ -15,6 +15,13 @@ button {
     font-size: 1.9rem;
     color: rgb(0, 0, 63)
 }
+
+button:hover {
+    opacity:0.5;
+    color:aliceblue;
+    background-color: rgb(0, 0, 63);
+    cursor:pointer
+}
 .score{
     margin-left: 10rem;
     color:blanchedalmond;
@@ -96,3 +103,25 @@ div .pinky{
     background-image: url('pinky.jpg');
     background-size: 30px;
 }
+
+@media (max-width: 900px) {
+    .container{
+      flex-direction: column;
+      /* Stack elements vertically on small screens */
+      align-items: center;
+      /* Center-align elements */
+    }
+  
+    .container .grid {
+        /* float:left; */
+        margin-left: 0px;
+        /* transform: translateX(0); */
+    }
+    .container .data {
+      margin-left: 180px;
+      align-content: center;
+      transform: translateX(0);
+      margin-top: 900px;
+      /* Add top margin */
+    }
+  }
