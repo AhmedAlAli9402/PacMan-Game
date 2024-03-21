@@ -15,8 +15,9 @@ let mseconds = 0
 let seconds = 0
 let minutes = 0 
 let addghostscore
-let isPaused = false
+let isPaused = true
 let tryBest = true
+let request
 const resultDisplay = document.querySelector('.score')
 const timeDisplay = document.querySelector('.time')
 const addscoreDisplay = document.querySelector('.addscore')
@@ -56,7 +57,7 @@ var pause = document.getElementById("pausegame")
 CreateSquare()
 const squares = Array.from(document.querySelectorAll('.grid div'))
 document.addEventListener('keydown', changeDirection)
-pacmanMoving = setInterval(movePacman, 200);
+// pacmanMoving = setInterval(movePacman, 200);
 CreateRoute()
 AddPowerPellet()
 AddingPlayers()
@@ -106,15 +107,9 @@ resultDisplay.innerHTML = "Score:  " + score
 // @ts-ignore
 addscoreDisplay.innerHTML = 0
 PowerUp(true)
-if (pelletCount >= 278){
-    youWin()
-}
 } else{
 squares[pos].classList.remove('pellet')
 pelletCount++
-if (pelletCount >= 278){
-    youWin()
-}
 score += 10
 // @ts-ignore
 addscoreDisplay.innerHTML = "+" + 10
@@ -132,6 +127,9 @@ squares[currentPacmanPos].classList.remove('pacman')
 squares[pos].classList.add('pacman')
 if (squares[pos].classList.contains('pellet')){
     PacmanEatPellet(pos, false)
+}
+if (pelletCount >= 278){
+    youWin()
 }
 if (squares[pos].classList.contains('scaredghost')){
     for (let i=1;i<5;i++){
@@ -204,7 +202,7 @@ ghosts[i].firstMove = true
 // requestAnimationFrame(movePacman)
 }
 function changeDirection(e){
-playGame()
+isPaused = false
 switch(e.key){
     case 'ArrowUp':
         if (facing !== "up"){
@@ -475,14 +473,15 @@ timeDisplay.innerHTML = "Time: " + minutes + "M " + seconds + "S"
 function pauseGame(){
 if (!isPaused){
 isPaused = true
-clearInterval(pacmanMoving)
+// clearInterval(pacmanMoving)
+// cancelAnimationFrame(request)
 }
 }
 
 function playGame(){
 if (isPaused && lives > 0){
     isPaused = false
-    pacmanMoving = setInterval(movePacman, 200)
+    // pacmanMoving = setInterval(movePacman, 200)
 }
 }
 
@@ -497,6 +496,9 @@ function restartGame(){
 window.location.reload()
 }
 function animate(){
-window.requestAnimationFrame(movePacman)
-window.requestAnimationFrame(moveGhosts)
+    setTimeout(function() {
+       request = requestAnimationFrame(animate);
+       if (!isPaused && lives > 0){
+        movePacman(false)}
+    }, 200);
 }
