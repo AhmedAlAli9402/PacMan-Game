@@ -115,6 +115,9 @@ score += 10
 addscoreDisplay.innerHTML = "+" + 10
 // @ts-ignore
 resultDisplay.innerHTML = "Score:  " + score
+if (pelletCount >= 278){
+    youWin()
+}
 }
 }
 
@@ -443,9 +446,9 @@ squares[ghosts[i].position].removeAttribute("class")
 }
 ghostTimer = 0
 ghosts = {1:{name:"blinky", position:343,originalposition:343, moving:"left", target:31, targetMet:false, firstMove:false, scared:false, interval:0, goingBack:false},
-            2:{name:"pinky", position:431, originalposition:431,moving:"right", target:55, targetMet:false, firstMove:false, scared:false, interval:30, goingBack:false},
-            3:{name:"clyde", position:433, originalposition:433, moving:"right", target:865, targetMet:false, firstMove:false, scared:false, interval:50, goingBack:false},
-            4:{name:"inky", position:435,originalposition:435, moving:"right", target:841, targetMet:false, firstMove:false, scared:false, interval:70, goingBack:false}}
+ 2:{name:"pinky", position:431, originalposition:431,moving:"right", target:55, targetMet:false, firstMove:false, scared:false, interval:30, goingBack:false},
+ 3:{name:"clyde", position:433, originalposition:433, moving:"right", target:865, targetMet:false, firstMove:false, scared:false, interval:50, goingBack:false},
+ 4:{name:"inky", position:435,originalposition:435, moving:"right", target:841, targetMet:false, firstMove:false, scared:false, interval:70, goingBack:false}}
 currentPacmanPos = 673
 facing = "right"
 squares[currentPacmanPos].classList.add('pacman')
@@ -453,11 +456,10 @@ pauseGame()
 }
 
 function youWin(){
-clearInterval(pacmanMoving)
+cancelAnimationFrame(request)
+    // @ts-ignore
+addscoreDisplay.innerHTML = "YOU WIN"
 // @ts-ignore
-addscoreDisplay.innerHTML = ''
-// @ts-ignore
-resultDisplay.innerHTML = "YOU WIN"
 }
 
 function timer(){
@@ -473,7 +475,6 @@ timeDisplay.innerHTML = "Time: " + minutes + "M " + seconds + "S"
 function pauseGame(){
 if (!isPaused){
 isPaused = true
-// clearInterval(pacmanMoving)
 // cancelAnimationFrame(request)
 }
 }
