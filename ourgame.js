@@ -15,6 +15,7 @@ let mseconds = 0
 let seconds = 0
 let minutes = 0 
 let addghostscore
+let LastPositionClicked = ""
 let isPaused = true
 let tryBest = true
 let request
@@ -171,9 +172,30 @@ if (!change){
     moveGhosts(1)
     moveGhosts(2)
     moveGhosts(3)
-    moveGhosts(4)}
+    moveGhosts(4)
+}
 
-if (facing === "right" && borders.includes(currentPacmanPos + 1)){
+if (LastPositionClicked === "right" && borders.includes(currentPacmanPos + 1)){
+    updatePacmanPos = currentPacmanPos + 1
+    facing = LastPositionClicked
+    PacmanPosition(updatePacmanPos)
+    originalFacing = LastPositionClicked
+    } else if (LastPositionClicked === "left" && borders.includes(currentPacmanPos - 1)){
+    updatePacmanPos = currentPacmanPos - 1
+    facing = LastPositionClicked
+    PacmanPosition(updatePacmanPos)
+    originalFacing = LastPositionClicked
+    } else if (LastPositionClicked === "down" && borders.includes(currentPacmanPos + 30)){
+    updatePacmanPos = currentPacmanPos + width
+    facing = LastPositionClicked
+    PacmanPosition(updatePacmanPos)
+    originalFacing = LastPositionClicked
+    } else if (LastPositionClicked === "up" && borders.includes(currentPacmanPos - 30)){
+    updatePacmanPos = currentPacmanPos - width
+    facing = LastPositionClicked
+    PacmanPosition(updatePacmanPos)
+    originalFacing = LastPositionClicked
+    } else if (facing === "right" && borders.includes(currentPacmanPos + 1)){
 updatePacmanPos = currentPacmanPos + 1
 PacmanPosition(updatePacmanPos)
 originalFacing = facing
@@ -208,6 +230,7 @@ function changeDirection(e){
 isPaused = false
 switch(e.key){
     case 'ArrowUp':
+        LastPositionClicked = "up"
         if (facing !== "up"){
             facing = "up"
             movePacman(true)
@@ -215,6 +238,7 @@ switch(e.key){
         } 
         break
     case 'ArrowRight':
+        LastPositionClicked = "right"
         if (facing !== "right"){
             facing = "right"
             movePacman(true)
@@ -222,6 +246,7 @@ switch(e.key){
         } 
         break
     case 'ArrowDown':
+        LastPositionClicked = "down"
         if (facing !== "down"){
             facing = "down"
             movePacman(true)
@@ -229,6 +254,7 @@ switch(e.key){
         } 
         break
     case 'ArrowLeft':
+        LastPositionClicked = "left"
         if (facing !== "left"){
             facing = "left"
             movePacman(true)
@@ -501,5 +527,5 @@ function animate(){
        request = requestAnimationFrame(animate);
        if (!isPaused && lives > 0){
         movePacman(false)}
-    }, 200);
+    }, 170);
 }

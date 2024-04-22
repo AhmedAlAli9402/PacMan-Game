@@ -1,5 +1,6 @@
 body{
     background-color: rgb(0, 0, 63);
+    transform: translateZ(0);
 }
 h1 {
     color:antiquewhite;
@@ -47,7 +48,8 @@ button:hover {
     background: url('grid.jpeg') no-repeat;
     background-size: 815px;
     border-radius: 20px;
-     margin-left:500px
+     margin-left:500px;
+     transform: translateZ(1);
 }
 .grid div {
     width: 30px;
